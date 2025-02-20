@@ -1,11 +1,12 @@
 import { activities, type Activity, type InsertActivity } from "@shared/schema";
 import { db } from "./db";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export interface IStorage {
   getActivities(): Promise<Activity[]>;
   getActivitiesByDate(date: string): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
+  updateActivity(id: number, activity: Partial<InsertActivity>): Promise<Activity>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -36,6 +37,15 @@ export class DatabaseStorage implements IStorage {
       .values(insertActivity)
       .returning();
     return activity;
+  }
+
+  async updateActivity(id: number, activity: Partial<InsertActivity>): Promise<Activity> {
+    const [updatedActivity] = await db
+      .update(activities)
+      .set(activity)
+      .where(eq(activities.id, id))
+      .returning();
+    return updatedActivity;
   }
 }
 

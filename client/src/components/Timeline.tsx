@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Plus, Clock } from "lucide-react";
 import NodeDialog from "./NodeDialog";
+import EditDialog from "./EditDialog";
 import { motion } from "framer-motion";
 
 interface TimelineProps {
@@ -65,7 +66,7 @@ export default function Timeline({ activities, detailed = false }: TimelineProps
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="relative flex items-center justify-center"
                 >
-                  <motion.div 
+                  <motion.div
                     className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rounded-full shadow-lg"
                     whileHover={{ scale: 1.2 }}
                     transition={{ type: "spring", stiffness: 300 }}
@@ -73,9 +74,12 @@ export default function Timeline({ activities, detailed = false }: TimelineProps
 
                   <Card className="w-[85%] ml-[60%] hover:shadow-lg transition-shadow">
                     <CardHeader className="p-4 pb-2">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        {format(new Date(activity.timestamp), "h:mm a")}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          {format(new Date(activity.timestamp), "h:mm a")}
+                        </div>
+                        <EditDialog activity={activity} />
                       </div>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
