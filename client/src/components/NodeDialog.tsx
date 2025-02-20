@@ -19,9 +19,8 @@ export default function NodeDialog() {
 
   const createActivity = useMutation({
     mutationFn: async () => {
-      const timestamp = new Date().toISOString();
       return apiRequest("POST", "/api/activities", {
-        timestamp,
+        timestamp: new Date().toISOString(),
         note,
         photoUrl,
       });
@@ -56,7 +55,7 @@ export default function NodeDialog() {
 
         {showCamera ? (
           <Camera
-            onCapture={(url) => {
+            onCapture={(url: string) => {
               setPhotoUrl(url);
               setShowCamera(false);
             }}

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -15,10 +15,9 @@ export const insertActivitySchema = createInsertSchema(activities)
     note: true,
     photoUrl: true,
   })
-  .transform((data) => ({
-    ...data,
-    timestamp: new Date(data.timestamp),
-  }));
+  .extend({
+    timestamp: z.string().transform((str) => new Date(str)),
+  });
 
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type Activity = typeof activities.$inferSelect;
