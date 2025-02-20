@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Activity } from "@shared/schema";
 import Timeline from "@/components/Timeline";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Home() {
   const { data: activities, isLoading } = useQuery<Activity[]>({
@@ -22,9 +21,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           Your Timeline
         </h1>
-        <ScrollArea className="h-[calc(100vh-10rem)]">
-          <Timeline activities={activities || []} />
-        </ScrollArea>
+        <Timeline activities={activities || []} />
       </div>
     </div>
   );
