@@ -1,4 +1,6 @@
 import { activities, type Activity, type InsertActivity } from "@shared/schema";
+import { db } from "./db";
+import { desc } from "drizzle-orm";
 
 export interface IStorage {
   getActivities(): Promise<Activity[]>;
@@ -6,19 +8,9 @@ export interface IStorage {
   createActivity(activity: InsertActivity): Promise<Activity>;
 }
 
-export class MemStorage implements IStorage {
-  private activities: Map<number, Activity>;
-  private currentId: number;
-
-  constructor() {
-    this.activities = new Map();
-    this.currentId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getActivities(): Promise<Activity[]> {
-    return Array.from(this.activities.values()).sort((a, b) => 
-      b.timestamp.getTime() - a.timestamp.getTime()
-    );
+    return await db.select().from(activities).orderBy(desc(activities.timestamp));
   }
 
   async getActivitiesByDate(date: string): Promise<Activity[]> {
@@ -28,25 +20,23 @@ export class MemStorage implements IStorage {
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
 
-    return Array.from(this.activities.values())
-      .filter(activity => {
-        const activityDate = activity.timestamp;
-        return activityDate >= startOfDay && activityDate <= endOfDay;
-      })
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    return await db
+      .select()
+      .from(activities)
+      .where(q => q.and(
+        q.gte(activities.timestamp, startOfDay),
+        q.lte(activities.timestamp, endOfDay)
+      ))
+      .orderBy(desc(activities.timestamp));
   }
 
   async createActivity(insertActivity: InsertActivity): Promise<Activity> {
-    const id = this.currentId++;
-    const activity: Activity = {
-      id,
-      timestamp: insertActivity.timestamp,
-      note: insertActivity.note || null,
-      photoUrl: insertActivity.photoUrl || null
-    };
-    this.activities.set(id, activity);
+    const [activity] = await db
+      .insert(activities)
+      .values(insertActivity)
+      .returning();
     return activity;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
