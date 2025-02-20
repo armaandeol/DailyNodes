@@ -24,7 +24,7 @@ export class MemStorage implements IStorage {
   async getActivitiesByDate(date: string): Promise<Activity[]> {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
-    
+
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
 
@@ -40,7 +40,12 @@ export class MemStorage implements IStorage {
 
   async createActivity(insertActivity: InsertActivity): Promise<Activity> {
     const id = this.currentId++;
-    const activity: Activity = { ...insertActivity, id };
+    const activity: Activity = {
+      id,
+      timestamp: new Date(insertActivity.timestamp),
+      note: insertActivity.note || null,
+      photoUrl: insertActivity.photoUrl || null
+    };
     this.activities.set(id, activity);
     return activity;
   }
