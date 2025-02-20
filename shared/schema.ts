@@ -9,11 +9,16 @@ export const activities = pgTable("activities", {
   photoUrl: text("photo_url"),
 });
 
-export const insertActivitySchema = createInsertSchema(activities).pick({
-  timestamp: true,
-  note: true,
-  photoUrl: true,
-});
+export const insertActivitySchema = createInsertSchema(activities)
+  .pick({
+    timestamp: true,
+    note: true,
+    photoUrl: true,
+  })
+  .transform((data) => ({
+    ...data,
+    timestamp: new Date(data.timestamp),
+  }));
 
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
 export type Activity = typeof activities.$inferSelect;

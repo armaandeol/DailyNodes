@@ -17,7 +17,7 @@ export class MemStorage implements IStorage {
 
   async getActivities(): Promise<Activity[]> {
     return Array.from(this.activities.values()).sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      b.timestamp.getTime() - a.timestamp.getTime()
     );
   }
 
@@ -30,19 +30,17 @@ export class MemStorage implements IStorage {
 
     return Array.from(this.activities.values())
       .filter(activity => {
-        const activityDate = new Date(activity.timestamp);
+        const activityDate = activity.timestamp;
         return activityDate >= startOfDay && activityDate <= endOfDay;
       })
-      .sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   async createActivity(insertActivity: InsertActivity): Promise<Activity> {
     const id = this.currentId++;
     const activity: Activity = {
       id,
-      timestamp: new Date(insertActivity.timestamp),
+      timestamp: insertActivity.timestamp,
       note: insertActivity.note || null,
       photoUrl: insertActivity.photoUrl || null
     };
