@@ -7,37 +7,56 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowLeft, Plus } from "lucide-react";
 import NodeDialog from "@/components/NodeDialog";
 import { format } from "date-fns";
+import { useTheme } from "@/context/ThemeContext";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { useEffect } from "react";
 
 export default function DayView() {
   const { date } = useParams<{ date: string }>();
   
-  const { data: activities, isLoading } = useQuery<Activity[]>({
+  const { data: activities, isLoading, refetch } = useQuery<Activity[]>({
     queryKey: ["/api/activities", date],
+    queryFn: async () => {
+      const response = await fetch(`/api/activities/${date}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch activities");
+      }
+      return response.json();
+    },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [date, refetch]);
+
+  const { theme } = useTheme();
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: theme.primary }}></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: theme.background, color: theme.text }}>
       <div className="container mx-auto py-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Link href="/">
               <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4" style={{ color: theme.primary }} />
               </Button>
             </Link>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold" style={{ color: theme.primary }}>
               {format(new Date(date), "MMMM d, yyyy")}
             </h1>
           </div>
-          <NodeDialog />
+          <div className="flex items-center gap-4">
+            <NodeDialog />
+            <ThemeSwitcher />
+          </div>
         </div>
         <ScrollArea className="h-[calc(100vh-10rem)]">
           <Timeline activities={activities || []} detailed />

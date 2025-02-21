@@ -1,3 +1,4 @@
+import React from "react";
 import { type Activity, type DayGroup } from "@shared/schema";
 import { format } from "date-fns";
 import { Link } from "wouter";
@@ -13,7 +14,11 @@ interface TimelineProps {
   detailed?: boolean;
 }
 
-export default function Timeline({ activities, detailed = false }: TimelineProps) {
+const Timeline = ({ activities, detailed = false }: TimelineProps) => {
+  if (activities.length === 0) {
+    return <p>No activities found.</p>;
+  }
+
   const groupedActivities = activities.reduce<DayGroup[]>((groups, activity) => {
     const date = format(new Date(activity.timestamp), "yyyy-MM-dd");
     const group = groups.find(g => g.date === date);
@@ -105,4 +110,6 @@ export default function Timeline({ activities, detailed = false }: TimelineProps
       </div>
     </div>
   );
-}
+};
+
+export default Timeline;

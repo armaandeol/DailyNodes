@@ -1,3 +1,5 @@
+import React from "react";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -16,13 +18,23 @@ function Router() {
   );
 }
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
-    </QueryClientProvider>
-  );
-}
+const App = () => {
+  const { theme } = useTheme();
 
-export default App;
+  return (
+    <div style={{ backgroundColor: theme.background, color: theme.text }}>
+      <QueryClientProvider client={queryClient}>
+        <Router />
+        <Toaster />
+      </QueryClientProvider>
+    </div>
+  );
+};
+
+const RootApp = () => (
+  <ThemeProvider>
+    <App />
+  </ThemeProvider>
+);
+
+export default RootApp;

@@ -1,6 +1,7 @@
 import { activities, type Activity, type InsertActivity } from "@shared/schema";
 import { db } from "./db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, and } from "drizzle-orm";
+import { sql } from "drizzle-orm"; // Add this import
 
 export interface IStorage {
   getActivities(): Promise<Activity[]>;
@@ -24,9 +25,9 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(activities)
-      .where(q => q.and(
-        q.gte(activities.timestamp, startOfDay),
-        q.lte(activities.timestamp, endOfDay)
+      .where(and(
+        sql`${activities.timestamp} >= ${startOfDay.toISOString()}`,
+        sql`${activities.timestamp} <= ${endOfDay.toISOString()}`
       ))
       .orderBy(desc(activities.timestamp));
   }
