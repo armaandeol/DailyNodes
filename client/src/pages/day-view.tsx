@@ -49,14 +49,22 @@ export default function DayView() {
                 <ArrowLeft className="h-4 w-4" style={{ color: theme.primary }} />
               </Button>
             </Link>
-            <h1 className="text-4xl font-bold" style={{ color: theme.primary }}>
-              {format(new Date(date), "MMMM d, yyyy")}
-            </h1>
+            <Link href="/">
+              <h1 className="text-4xl font-bold text-center w-full cursor-pointer">
+              <span style={{ color: theme.primary, fontFamily: 'Lobster, serif' }}>Daily</span>
+              <span style={{ color: theme.primary, fontFamily: 'Playwrite IT Moderna, serif' }}>Nodes</span>
+              </h1>
+            </Link>
           </div>
           <div className="flex items-center gap-4">
             <NodeDialog />
             <ThemeSwitcher />
           </div>
+        </div>
+        <div className="flex items-center justify-center mb-8">
+          <h1 className="text-4xl font-bold" style={{ color: theme.primary }}>
+            {format(new Date(date), "MMMM d, yyyy")}
+          </h1>
         </div>
         <ScrollArea className="h-[calc(100vh-10rem)]">
           <Timeline activities={activities || []} detailed />

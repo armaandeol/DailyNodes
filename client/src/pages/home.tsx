@@ -23,8 +23,9 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: theme.background, color: theme.text }}>
       <div className="container mx-auto py-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold" style={{ color: theme.primary }}>
-            Your Timeline
+          <h1 className="text-4xl font-bold text-center w-full">
+            <span style={{ color: theme.primary, fontFamily: 'Lobster, serif' }}>Daily</span>
+            <span style={{ color: theme.primary, fontFamily: 'Playwrite IT Moderna, serif' }}>Nodes</span>
           </h1>
           <ThemeSwitcher />
         </div>
